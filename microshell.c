@@ -6,7 +6,7 @@
 /*   By: amarzana <amarzana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 13:44:41 by dilopez-          #+#    #+#             */
-/*   Updated: 2022/11/09 16:58:58 by amarzana         ###   ########.fr       */
+/*   Updated: 2022/11/09 19:47:22 by amarzana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,31 +16,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-static int	executor(char *av[], int i, char *ev[]);
-static int	builtin_cd(char *av[]);
-static int	print(char *str);
-
 int	g_fd;
 
-int	main(int an, char **av, char **ev)
+static int	print(char *str)
 {
-	int	i = 1;
+	int	len = 0;
 
-	if (an == 1)
-		return (0);
-	av[an] = 0;
-	while (av[i - 1] && av[i])
-	{
-		av = av + i;
-		i = 0;
-		while (av[i] && strcmp(av[i], "|") != 0 && strcmp(av[i], ";") != 0)
-			i++;
-		if (!strcmp(*av, "cd"))
-			builtin_cd(av);
-		else
-			executor(av, i, ev);
-		i++;
-	}
+	while (str[len])
+		len++;
+	write(2, str, len);
+	return (1);
 }
 
 static int	executor(char **av, int i, char **ev)
@@ -59,7 +44,7 @@ static int	executor(char **av, int i, char **ev)
 	pid = fork();
 	if (pid == -1)
 		return (print("error: fatal\n"));
-	else if (!pid)
+	else if (pid == 0)
 	{
 		close(fd[0]);
 		dup2(g_fd, 0);
@@ -89,7 +74,7 @@ static int	executor(char **av, int i, char **ev)
 	return (0);
 }
 
-static int	builtin_cd(char *av[])
+static int	builtin_cd(char **av)
 {
 	if (av[2] && strcmp(av[2], "|") != 0 && strcmp(av[2], ";") != 0)
 		return (print("error: cd: bad arguments\n"));
@@ -98,12 +83,23 @@ static int	builtin_cd(char *av[])
 	return (0);
 }
 
-static int	print(char *str)
+int	main(int an, char **av, char **ev)
 {
-	int	len = 0;
+	int	i = 1;
 
-	while (str[len])
-		len++;
-	write(2, str, len);
-	return (1);
+	if (an == 1)
+		return (0);
+	av[an] = 0;
+	while (av[i - 1] && av[i])
+	{
+		av = av + i;
+		i = 0;
+		while (av[i] && strcmp(av[i], "|") != 0 && strcmp(av[i], ";") != 0)
+			i++;
+		if (!strcmp(*av, "cd"))
+			builtin_cd(av);
+		else
+			executor(av, i, ev);
+		i++;
+	}
 }
