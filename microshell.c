@@ -6,7 +6,7 @@
 /*   By: amarzana <amarzana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 13:44:41 by dilopez-          #+#    #+#             */
-/*   Updated: 2022/11/09 19:47:22 by amarzana         ###   ########.fr       */
+/*   Updated: 2022/11/10 15:16:25 by amarzana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,8 @@ static int	executor(char **av, int i, char **ev)
 		av[i] = 0;
 		if (next)
 			dup2(fd[1], 1);
-		close(g_fd);
+		if (g_fd != 0)
+			close(g_fd);
 		close(fd[1]);
 		if (execve(*av, av, ev) == -1)
 		{
