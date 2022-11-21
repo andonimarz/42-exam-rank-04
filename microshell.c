@@ -40,10 +40,10 @@ static int	executor(char **av, int i, char **ev)
 	if (av[i] == *av)
 		return (0);
 	if (pipe(fd) == -1)
-		return (print("error: fatal\n"));
+		return (print("error: fatal\n")); // exit(0); ??
 	pid = fork();
 	if (pid == -1)
-		return (print("error: fatal\n"));
+		return (print("error: fatal\n")); // exit(0); ??
 	else if (pid == 0)
 	{
 		close(fd[0]);
@@ -66,10 +66,10 @@ static int	executor(char **av, int i, char **ev)
 	{
 		close(fd[1]);
 		waitpid(pid, &status, 0);
+		if (g_fd != 0)
+			close(g_fd);
 		if (next)
 			g_fd = dup(fd[0]);
-		else
-			close(g_fd);
 		close(fd[0]);
 	}
 	return (0);
