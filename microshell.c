@@ -14,7 +14,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
-#include <stdio.h>
+
 
 int	g_fd;
 
@@ -43,7 +43,7 @@ static int	executor(char **av, int i, char **ev)
 		return (print("error: fatal\n")); // exit(0); ??
 	pid = fork();
 	if (pid == -1)
-		return (print("error: fatal\n")); // exit(0); ??
+		return (print("error: fatal\n")); // return value of the print function (1);
 	else if (pid == 0)
 	{
 		close(fd[0]);
@@ -80,7 +80,7 @@ static int	builtin_cd(char **av)
 	if (av[2] && strcmp(av[2], "|") != 0 && strcmp(av[2], ";") != 0)
 		return (print("error: cd: bad arguments\n"));
 	if (chdir(av[1]) == -1)
-		return (print("error: cannot execute cd\n"));
+		return (print("error: cd: cannot change directory to "), print(av[1]), print("\n"));
 	return (0);
 }
 
